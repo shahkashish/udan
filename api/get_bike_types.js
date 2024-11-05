@@ -4,7 +4,7 @@ const supabase = createClient("https://asbphrnlbbgpphwryywe.supabase.co", "eyJhb
 
 module.exports = async (req, res) => {
     
-    let { data: stockStatus, error } = await supabase
+    let { data, error } = await supabase
     .from('stockStatus')
     .select('*')
     console.log(data)   
