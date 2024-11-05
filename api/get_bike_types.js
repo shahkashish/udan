@@ -4,9 +4,8 @@ const supabase = createClient("https://asbphrnlbbgpphwryywe.supabase.co", "eyJhb
 
 module.exports = async (req, res) => {
     const { data, error } = await supabase
-        .from('bikes')
-        .select('type')
-        .distinct();
+        .from('stockStatus')
+        .select('bikeName')
 
     if (error) {
         res.status(500).json({ error: error.message });
