@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
     
     let { data, error } = await supabase
     .from("stockStatus")
-    .select("bikeName")
+    .select('bikeName')
     console.log(data)   
 
     if (error) {
