@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bike Shop</title>
+</head>
+<body>
+    <h1>Find Your Bike</h1>
+    
+    <label for="bikeType">Bike Type:</label>
+    <select id="bikeType">
+        <option value="">Select Type</option>
+    </select>
+
+    <label for="colour">Colour:</label>
+    <select id="colour">
+        <option value="">Select Colour</option>
+    </select>
+
+    <button id="showBikes">Show Bikes</button>
+
+    <h2>Available Bikes</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Colour</th>
+                <th>Price</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="bikeTable">
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Fetch bike types and populate dropdown
+        async function fetchBikeTypes() {
+            const response = await fetch('/get_bike_types');
+            const types = await response.json();
+            const bikeTypeDropdown = document.getElementById('bikeType');
+            types.forEach(type => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                bikeTypeDropdown.appendChild(option);
+            });
+        }
+
+        // Fetch colours based on selected type
+        async function fetchColours(bikeType) {
+            const response = await fetch(`/get_colours?bikeType=${bikeType}`);
+            const colours = await response.json();
+            const colourDropdown = document.getElementById('colour');
+            colourDropdown.innerHTML = '<option value="">Select Colour</option>';
+            colours.forEach(colour => {
+                const option = document.createElement('option');
+                option.value = colour;
+                option.textContent = colour;
+                colourDropdown.appendChild(option);
+            });
+        }
+
+        // Fetch available bikes based on selected type and colour
+        async function fetchBikes() {
+            const bikeType = document.getElementById('bikeType').value;
+            const colour = document.getElementById('colour').value;
+            const response = await fetch(`/get_bikes?bikeType=${bikeType}&colour=${colour}`);
+            const bikes = await response.json();
+            const bikeTable = document.getElementById('bikeTable');
+            bikeTable.innerHTML = '';
+            bikes.forEach(bike => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${bike.id}</td>
+                    <td>${bike.type}</td>
+                    <td>${bike.colour}</td>
+                    <td>${bike.price}</td>
+                    <td>${bike.status}</td>
+                `;
+                bikeTable.appendChild(row);
+            });
+        }
+
+        document.getElementById('bikeType').addEventListener('change', (event) => {
+            fetchColours(event.target.value);
+        });
+
+        document.getElementById('showBikes').addEventListener('click', fetchBikes);
+
+        fetchBikeTypes();
+    </script>
+</body>
+</html>

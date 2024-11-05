@@ -1,0 +1,7 @@
+{
+    "rewrites": [
+        { "source": "/get_bike_types", "destination": "/api/get_bike_types" },
+        { "source": "/get_colours", "destination": "/api/get_colours" },
+        { "source": "/get_bikes", "destination": "/api/get_bikes" }
+    ]
+}
