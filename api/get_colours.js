@@ -6,17 +6,17 @@ module.exports = async (req, res) => {
     const bikeName = req.query.bikeName;
     const status = req.query.status;
     if(status === "Sold"){
-        const { data, error } = await supabase
+        ({ data, error } = await supabase
             .from('stockStatus')
             .select('bikeColor')
             .eq('bikeName', bikeName)
-            .eq('status',"SOLD")
+            .eq('status',"SOLD"));
     }else {
-        const { data, error } = await supabase
+        ({ data, error } = await supabase
             .from('stockStatus')
             .select('bikeColor')
             .eq('bikeName', bikeName)
-            .neq('status',"SOLD")
+            .neq('status',"SOLD"));
     }
     
 
