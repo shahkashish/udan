@@ -18,15 +18,10 @@ app.get('/get_bike_types', async (req, res) => {
         const { data, error } = await supabase
             .from('stockStatus')
             .select('bikeName')
-        console.log("Data:", data);  // Add this line to debug
-        console.log("Error:", error);
-        // Handle any errors from Supabase
         if (error) {
-            console.log("here")
-            return res.status(500).json({ error: error.message });
+            res.status(500).json({ error: error.message });
         }
 
-        // Extract and send only distinct types
         const types = [...new Set(data.map(row => row.bikeName))];
     
         res.json(types);
@@ -35,12 +30,153 @@ app.get('/get_bike_types', async (req, res) => {
     }
 });
 
+app.get('/get_colours', async (req, res) => {
+    try {
+        const bikeName = req.query.bikeName;
+        const status = req.query.status;
+        if(status === "Sold"){
+            ({ data, error } = await supabase
+                .from('stockStatus')
+                .select('bikeColor')
+                .eq('bikeName', bikeName)
+                .eq('status',"SOLD"));
+        }else {
+            ({ data, error } = await supabase
+                .from('stockStatus')
+                .select('bikeColor')
+                .eq('bikeName', bikeName)
+                .neq('status',"SOLD"));
+        }
 
+        if (error) {
+            res.status(500).json({ error: error.message });
+        } else {
+            console.log("here")
+            res.json(data.map(row => row.bikeColor));
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Server error', message: err });
+    }
+});
 
-// Serve static files (for HTML, CSS, and JS in the frontend)
-
-
-// Route to get bike types
+app.get('/get_bikes', async (req, res) => {
+    try {
+        const { bikeName, bikeColor ,status} = req.query;
+    
+    
+        if (bikeName === "" && bikeColor === "" && status === "") {
+            // Case 1: All parameters are empty
+            ({ data, error } = await supabase
+                .from('stockStatus')
+                .select('*')
+            );
+        } else if (bikeName !== "" && bikeColor === "" && status === "") {
+            // Case 2: Only bikeName is provided
+            ({ data, error } = await supabase
+                .from('stockStatus')
+                .select('*')
+                .eq('bikeName', bikeName)
+            );
+        } else if (bikeName === "" && bikeColor !== "" && status === "") {
+            // Case 3: Only bikeColor is provided
+            ({ data, error } = await supabase
+                .from('stockStatus')
+                .select('*')
+                .eq('bikeColor', bikeColor)
+            );
+        } else if (bikeName === "" && bikeColor === "" && status !== "") {
+            // Case 4: Only status is provided
+            if(status === "Sold"){
+                ({ data, error } = await supabase
+                    .from('stockStatus')
+                    .select('*')
+                    .eq('status', "SOLD")
+                );
+            } else{
+                ({ data, error } = await supabase
+                    .from('stockStatus')
+                    .select('*')
+                    .neq('status', "SOLD")
+                );
+            }
+            
+        } else if (bikeName !== "" && bikeColor !== "" && status === "") {
+            // Case 5: bikeName and bikeColor are provided
+            ({ data, error } = await supabase
+                .from('stockStatus')
+                .select('*')
+                .eq('bikeName', bikeName)
+                .eq('bikeColor', bikeColor)
+            );
+        } else if (bikeName !== "" && bikeColor === "" && status !== "") {
+            if(status === "Sold"){
+                ({ data, error } = await supabase
+                    .from('stockStatus')
+                    .select('*')
+                    .eq('bikeName', bikeName)
+                    .eq('status', "SOLD")
+                );
+            } else{
+                ({ data, error } = await supabase
+                    .from('stockStatus')
+                    .select('*')
+                    .eq('bikeName', bikeName)
+                    .neq('status', "SOLD")
+                );
+            }
+            // Case 6: bikeName and status are provided
+            
+        } else if (bikeName === "" && bikeColor !== "" && status !== "") {
+            // Case 7: bikeColor and status are provided
+            if(status === "Sold"){
+                ({ data, error } = await supabase
+                    .from('stockStatus')
+                    .select('*')
+                    .eq('bikeColor', bikeColor)
+                    .eq('status', "SOLD")
+                );
+            } else{
+                ({ data, error } = await supabase
+                    .from('stockStatus')
+                    .select('*')
+                    .eq('bikeColor', bikeColor)
+                    .neq('status', "SOLD")
+                );
+            }
+            
+        } else if (bikeName !== "" && bikeColor !== "" && status !== "") {
+            // Case 8: All parameters are provided
+            if(status === "Sold"){
+                ({ data, error } = await supabase
+                    .from('stockStatus')
+                    .select('*')
+                    .eq('bikeName', bikeName)
+                    .eq('bikeColor', bikeColor)
+                    .eq('status', "SOLD")
+                );
+            } else{
+                ({ data, error } = await supabase
+                    .from('stockStatus')
+                    .select('*')
+                    .eq('bikeName', bikeName)
+                    .eq('bikeColor', bikeColor)
+                    .neq('status', "SOLD")
+                );
+            }
+            
+        }
+    
+        if (error) {
+            res.status(500).json({ error: error.message });
+        } else {
+                res.json(data);
+            
+            
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
 
 
 // Start server
