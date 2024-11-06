@@ -7,7 +7,6 @@ module.exports = async (req, res) => {
     let { data, error } = await supabase
     .from("stockStatus")
     .select('bikeName')
-    console.log(data)   
 
     if (error) {
         res.status(500).json({ error: error.message });
