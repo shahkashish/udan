@@ -12,6 +12,6 @@ module.exports = async (req, res) => {
     if (error) {
         res.status(500).json({ error: error.message });
     } else {
-        res.json(data.map(row => row.type));
+        res.json(data.map(row => row.bikeName));
     }
 };

@@ -1,61 +1,47 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const PORT = 3000;
 
-// Connect to SQLite database
-const db = new sqlite3.Database('./bikes.db', (err) => {
-    if (err) {
-        console.error('Error opening database', err);
-    } else {
-        console.log('Connected to SQLite database');
+app.use(express.static('public'));
+const { createClient } = require('@supabase/supabase-js');
+
+
+// Initialize Supabase client
+const supabaseUrl = "https://asbphrnlbbgpphwryywe.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzYnBocm5sYmJncHBod3J5eXdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA4MjEyNDgsImV4cCI6MjA0NjM5NzI0OH0.wf9BNvUQ7_yHyKbLUK04AeyX4UN46eXOlxK4ieYylqE";
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Define an endpoint to get bike types
+app.get('/get_bike_types', async (req, res) => {
+    try {
+        // Query the 'stockStatus' table to get distinct bike types
+        const { data, error } = await supabase
+            .from('stockStatus')
+            .select('bikeName')
+        console.log("Data:", data);  // Add this line to debug
+        console.log("Error:", error);
+        // Handle any errors from Supabase
+        if (error) {
+            console.log("here")
+            return res.status(500).json({ error: error.message });
+        }
+
+        // Extract and send only distinct types
+        const types = [...new Set(data.map(row => row.bikeName))];
+    
+        res.json(types);
+    } catch (err) {
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
+
+
 // Serve static files (for HTML, CSS, and JS in the frontend)
-app.use(express.static('public'));
+
 
 // Route to get bike types
-app.get('/get_bike_types', (req, res) => {
-    db.all("SELECT DISTINCT type FROM bikes", [], (err, rows) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        res.json(rows.map(row => row.type));
-    });
-});
 
-// Route to get available colours for a selected bike type
-app.get('/get_colours', (req, res) => {
-    const bikeType = req.query.bikeType;
-    db.all("SELECT DISTINCT colour FROM bikes WHERE type = ?", [bikeType], (err, rows) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        res.json(rows.map(row => row.colour));
-    });
-});
-
-// Route to get available bikes based on selected type and colour
-app.get('/get_bikes', (req, res) => {
-    const { bikeType, colour } = req.query;
-    const query = "SELECT id, type, colour, price, status FROM bikes WHERE type = ? AND colour = ? AND status != 'sold'";
-    db.all(query, [bikeType, colour], (err, rows) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        res.json(rows.map(row => ({
-            id: row.id,
-            type: row.type,
-            colour: row.colour,
-            price: row.price,
-            status: row.status
-        })));
-    });
-});
 
 // Start server
 app.listen(PORT, () => {
