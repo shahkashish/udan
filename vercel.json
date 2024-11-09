@@ -11,6 +11,6 @@
         { "source": "/get_bikes", "destination": "/api/get_bikes" },
         { "source": "/", "destination": "/api/index" },
         { "source": "/changeStatus", "destination": "/api/changeStatus" },
-        { "source": "/uploadData", "destination": "/api/uploadData" }
+        { "source": "/uploadData", "destination": "/api/uploadExcel" }
     ]
 }
