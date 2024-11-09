@@ -10,7 +10,7 @@
         { "source": "/get_colours", "destination": "/api/get_colours" },
         { "source": "/get_bikes", "destination": "/api/get_bikes" },
         { "source": "/", "destination": "/api/index" },
-        { "source": "/changeStatus", "destination": "/api/changeStatus" },
+        { "source": "/changeStatus", "destination": "/public/changeStatus" },
         { "source": "/uploadExcel", "destination": "/api/uploadExcel" }
     ]
 }
