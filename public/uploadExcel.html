@@ -12,6 +12,83 @@
             background-color: #f4f4f4;
             color: #333;
         }
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-logo {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar-menu a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-menu a:hover {
+            background-color: #555;
+            border-radius: 5px;
+        }
+
+        /* Hamburger menu icon for mobile */
+        .menu-icon {
+            display: none;
+            font-size: 28px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* Dropdown menu for mobile */
+        .dropdown-menu {
+            display: none;
+            flex-direction: column;
+            background-color: #333;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            width: 200px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .dropdown-menu a {
+            color: #fff;
+            padding: 10px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #555;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 768px) {
+            .navbar-menu {
+                display: none;
+            }
+
+            .menu-icon {
+                display: block;
+            }
+        }
         h1, h2 {
             text-align: center;
             color: #333;
@@ -40,6 +117,22 @@
 </head>
 <body>
     <!-- Excel Upload Section -->
+    <nav class="navbar">
+        <div class="navbar-logo">Bike Shop</div>
+        <div class="navbar-menu" id="navbarMenu">
+            <a href="/">Find Bike</a>
+            <a href="/uploadExcel">Upload Excel</a>
+            <a href="/changeStatus">Change Status</a>
+        </div>
+        <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    </nav>
+
+    <!-- Dropdown Menu for Mobile -->
+    <div class="dropdown-menu" id="dropdownMenu">
+        <a href="/">Find Bike</a>
+        <a href="/uploadExcel">Upload Excel</a>
+        <a href="/changeStatus">Change Status</a>
+    </div>
     <h2>Upload Excel Data</h2>
     <input type="file" id="fileUpload" accept=".xlsx, .xls">
     <button id="uploadData">Upload Data</button>
