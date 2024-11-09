@@ -1,16 +1,21 @@
 const { createClient } = require('@supabase/supabase-js');
 
-const supabase = createClient("https://asbphrnlbbgpphwryywe.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzYnBocm5sYmJncHBod3J5eXdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA4MjEyNDgsImV4cCI6MjA0NjM5NzI0OH0.wf9BNvUQ7_yHyKbLUK04AeyX4UN46eXOlxK4ieYylqE");
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 module.exports = async (req, res) => {
-    
-    let { data, error } = await supabase
-    .from("stockStatus")
-    .select('bikeName')
+        
+    try {
+        // Query the 'stockStatus' table to get distinct bike types
+        const { data, error } = await supabase
+            .from('stockStatus')
+            .select('bike_name')
+        if (error) {
+            res.status(500).json({ error: error.message });
+        }
 
-    if (error) {
-        res.status(500).json({ error: error.message });
-    } else {
-        res.json(data.map(row => row.bikeName));
+        const types = [...new Set(data.map(row => row.bike_name))];
+        res.json(types);
+    } catch (err) {
+        res.status(500).json({ error: 'Server error' });
     }
 };
