@@ -1,8 +1,8 @@
 {
     "redirects": [
-        { "source": "/", "destination": "/index.html" },
-        { "source": "/changeStatus", "destination": "/changeStatus.html" },
-        { "source": "/uploadExcel", "destination": "/ndex.html" }
+        { "source": "/", "destination": "/api/index" },
+        { "source": "/changeStatus", "destination": "/api/changeStatus" },
+        { "source": "/uploadExcel", "destination": "/api/uploadExcel" }
   ],
     "rewrites": [
         { "source": "/get_bike_types", "destination": "/api/get_bike_types" },
