@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bike Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-logo {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar-menu a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-menu a:hover {
+            background-color: #555;
+            border-radius: 5px;
+        }
+
+        /* Hamburger menu icon for mobile */
+        .menu-icon {
+            display: none;
+            font-size: 28px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* Dropdown menu for mobile */
+        .dropdown-menu {
+            display: none;
+            flex-direction: column;
+            background-color: #333;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            width: 200px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .dropdown-menu a {
+            color: #fff;
+            padding: 10px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #555;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 768px) {
+            .navbar-menu {
+                display: none;
+            }
+
+            .menu-icon {
+                display: block;
+            }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .dropdown {
+            position: relative;
+            width: 100%;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content div {
+            padding: 8px 12px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .dropdown-content div:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-logo">Bike Shop</div>
+        <div class="navbar-menu" id="navbarMenu">
+            <a href="/">Find Bike</a>
+            <a href="/uploadExcel">Upload Excel</a>
+            <a href="/changeStatus">Change Status</a>
+        </div>
+        <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    </nav>
+
+    <!-- Dropdown Menu for Mobile -->
+    <div class="dropdown-menu" id="dropdownMenu">
+        <a href="/">Find Bike</a>
+        <a href="/uploadExcel">Upload Excel</a>
+        <a href="/changeStatus">Change Status</a>
+    </div>
+<div class="container">
+    <h2>Bike Details</h2>
+
+    <!-- Chassis Number Input with Autocomplete Dropdown -->
+    <label for="chasisInput">Chassis No.:</label>
+    <div class="dropdown">
+        <input type="text" id="chasisInput" placeholder="Enter Chassis No." oninput="filterChasis()">
+        <div id="dropdown" class="dropdown-content"></div>
+    </div>
+    <!-- Fetch Details Button -->
+    <button onclick="fetchBikeDetails()">Fetch Details</button>
+
+    <!-- Editable Bike Details Form -->
+    <div id="bikeDetailsForm" style="display: none;">
+        <label for="model">Model:</label>
+        <input type="text" id="model" />
+
+        <label for="color">Color:</label>
+        <input type="text" id="color" />
+
+        <label for="status">Status:</label>
+        <input type="text" id="status" />
+
+        <label for="cost">Cost:</label>
+        <input type="text" id="cost" />
+
+        <label for="sold_for">Sold for:</label>
+        <input type="text" id="sold_for" />
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" />
+
+        <label for="subDealerName">Sub-Dealer Name:</label>
+        <input type="text" id="subDealerName" />
+
+        <label for="subDealerContact">Sub-Dealer Contact:</label>
+        <input type="text" id="subDealerContact" />
+
+        <!-- Submit Button for Updating Details -->
+        <button onclick="updateBikeDetails()">Submit</button>
+    </div>
+</div>
+
+<script>
+    let allChasisNumbers = [];
+
+// Fetch all chassis numbers when the page loads
+async function fetchAllChasisNumbers() {
+    try {
+        const response = await fetch('/get_all_chasis');
+         // Replace with your actual API endpoint
+        allChasisNumbers = await response.json();
+    } catch (error) {
+        console.error("Error fetching all chassis numbers:", error);
+    }
+}
+
+// Call fetchAllChasisNumbers when the page loads
+fetchAllChasisNumbers();
+
+// Filter chassis numbers locally based on the input
+function filterChasis() {
+    const input = document.getElementById("chasisInput").value.toLowerCase();
+    const dropdown = document.getElementById("dropdown");
+
+    if (input.length < 2) {
+        dropdown.style.display = "none";
+        return;
+    }
+
+    dropdown.innerHTML = '';
+
+    // Filter allChasisNumbers based on the input
+    const filteredChasis = allChasisNumbers.filter(chasis => 
+        chasis.toLowerCase().includes(input)
+    );
+
+    filteredChasis.forEach(chasis => {
+        const item = document.createElement("div");
+        item.innerText = chasis;
+        item.onclick = () => {
+            document.getElementById("chasisInput").value = chasis;
+            dropdown.style.display = "none";
+        };
+        dropdown.appendChild(item);
+    });
+    dropdown.style.display = "block";
+}
+
+    async function fetchBikeDetails() {
+        const chasisNo = document.getElementById("chasisInput").value;
+
+        if (!chasisNo) {
+            alert("Please enter a chassis number");
+            return;
+        }
+
+        try {
+            // Replace with your actual API endpoint to fetch bike details
+            const response = await fetch(`/get_bike_details?chasis_no=${chasisNo}`);
+            const bike = await response.json();
+            console.log(bike)
+            document.getElementById("model").value = bike[0].bike_name;
+            document.getElementById("color").value = bike[0].bike_color;
+            document.getElementById("status").value = bike[0].status;
+            document.getElementById("cost").value = bike[0].cost;
+            document.getElementById("sold_for").value = bike[0].sold_for;
+            document.getElementById("location").value = bike[0].location;
+            document.getElementById("subDealerName").value = bike[0].sub_dealer_name;
+            document.getElementById("subDealerContact").value = bike[0].sub_dealer_contact_no;
+
+            document.getElementById("bikeDetailsForm").style.display = "block";
+        } catch (error) {
+            console.error("Error fetching bike details:", error);
+            alert("Failed to fetch bike details");
+        }
+    }
+
+    async function updateBikeDetails() {
+        const chasisNo = document.getElementById("chasisInput").value;
+        const model = document.getElementById("model").value;
+        const color = document.getElementById("color").value;
+        const status = document.getElementById("status").value;
+        const cost = document.getElementById("cost").value;
+        const sold_for = document.getElementById("sold_for").value;
+        const location = document.getElementById("location").value;
+        const subDealerName = document.getElementById("subDealerName").value;
+        const subDealerContact = document.getElementById("subDealerContact").value;
+
+        const updatedData = {
+            chasis_no: chasisNo,
+            model: model,
+            color: color,
+            status: status,
+            cost: cost,
+            sold_for: sold_for,
+            location: location,
+            sub_dealer_name: subDealerName,
+            sub_dealer_contact_no: subDealerContact
+        };
+
+        try {
+            // Replace with your actual API endpoint to update bike details
+            const response = await fetch(`/update_bike_details`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (response.ok) {
+                alert("Bike details updated successfully");
+            } else {
+                throw new Error("Failed to update bike details");
+            }
+        } catch (error) {
+            console.error("Error updating bike details:", error);
+            alert("Failed to update bike details");
+        }
+    }
+</script>
+
+</body>
+</html>

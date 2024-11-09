@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bike Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        select, input[type="file"], button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Excel Upload Section -->
+    <h2>Upload Excel Data</h2>
+    <input type="file" id="fileUpload" accept=".xlsx, .xls">
+    <button id="uploadData">Upload Data</button>
+    <script>
+        let selectedFile;
+
+        // Store the selected file when input changes
+        document.getElementById('fileUpload').addEventListener('change', function(event) {
+            selectedFile = event.target.files[0];
+        });
+
+        // Process the file only when upload button is clicked
+        document.getElementById('uploadData').addEventListener('click', function() {
+            if (!selectedFile) {
+                alert("Please select a file first!");
+                return;
+            }
+
+            var reader = new FileReader();
+            
+            reader.onload = function() {
+                var arrayBuffer = reader.result;
+                
+                // Read workbook as an array
+                var workbook = XLSX.read(arrayBuffer, { type: "array" });
+                
+                // Get the first sheet name
+                var firstSheetName = workbook.SheetNames[0];
+                
+                // Access the worksheet
+                var worksheet = workbook.Sheets[firstSheetName];
+                
+                // Convert worksheet to JSON
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+                console.log("JSON Data:", jsonData);
+                fetch('/upload_excel_data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(jsonData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Server response:", data);
+                    alert("Data uploaded successfully!");
+                })
+                .catch(error => {
+                    console.error("Error uploading data:", error);
+                    alert("Failed to upload data.");
+        });
+            };
+
+            // Use readAsArrayBuffer to handle large binary data
+            reader.readAsArrayBuffer(selectedFile);
+        });
+
+    </script>
+</body>
+
+</html>

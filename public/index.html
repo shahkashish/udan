@@ -6,98 +6,182 @@
     <title>Bike Shop</title>
     <style>
         /* Reset */
-        * {
+        body {
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        /* Page layout */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            background-color: #f9f9f9;
-            padding: 20px;
+            background-color: #f4f4f4;
             color: #333;
         }
 
-        /* Header styles */
-        h1 {
-            color: #444;
-            font-size: 2rem;
-            margin-bottom: 20px;
+        /* Navbar styles */
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        h2 {
-            color: #666;
-            margin-top: 40px;
-            font-size: 1.5rem;
-        }
-
-        /* Form and input styling */
-        label {
-            margin-right: 10px;
+        .navbar-logo {
+            color: #fff;
+            font-size: 24px;
             font-weight: bold;
         }
 
-        select {
-            padding: 8px;
-            margin: 5px 10px 5px 0;
+        .navbar-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar-menu a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-menu a:hover {
+            background-color: #555;
+            border-radius: 5px;
+        }
+
+        /* Hamburger menu icon for mobile */
+        .menu-icon {
+            display: none;
+            font-size: 28px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* Dropdown menu for mobile */
+        .dropdown-menu {
+            display: none;
+            flex-direction: column;
+            background-color: #333;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            width: 200px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .dropdown-menu a {
+            color: #fff;
+            padding: 10px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #555;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 768px) {
+            .navbar-menu {
+                display: none;
+            }
+
+            .menu-icon {
+                display: block;
+            }
+        }
+
+        /* Content section styles */
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .content-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+        }
+
+        select, input[type="file"], button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            font-size: 16px;
         }
 
         button {
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
+            background-color: #007bff;
+            color: #fff;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
-            font-size: 1rem;
-            margin-top: 20px;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
             background-color: #0056b3;
         }
 
-        /* Table styling */
+        /* Table styles */
         table {
             width: 100%;
-            max-width: 600px;
             border-collapse: collapse;
             margin-top: 20px;
         }
 
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
         th, td {
             padding: 12px;
-            border: 1px solid #ddd;
             text-align: center;
         }
 
         th {
-            background-color: #007BFF;
+            background-color: #007bff;
             color: white;
         }
 
-        tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        /* Responsive design */
-        @media (max-width: 600px) {
-            table, h2, button, select, label {
-                font-size: 0.9rem;
-            }
+        td {
+            background-color: #f9f9f9;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
+
 <body>
+
+    <nav class="navbar">
+        <div class="navbar-logo">Bike Shop</div>
+        <div class="navbar-menu" id="navbarMenu">
+            <a href="/">Find Bike</a>
+            <a href="/uploadExcel">Upload Excel</a>
+            <a href="/changeStatus">Change Status</a>
+        </div>
+        <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    </nav>
+
+    <!-- Dropdown Menu for Mobile -->
+    <div class="dropdown-menu" id="dropdownMenu">
+        <a href="/">Find Bike</a>
+        <a href="/uploadExcel">Upload Excel</a>
+        <a href="/changeStatus">Change Status</a>
+    </div>
     <h1>Find Your Bike</h1>
     
     <!-- Dropdowns for bike type, status, and color -->
@@ -126,16 +210,23 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Type</th>
+                <th>Chasis No.</th>
+                <th>Model</th>
                 <th>Colour</th>
                 <th>Status</th>
+                <th>Cost</th>
+                <th>Sold for</th>
+                <th>Location</th>
+                <th>Sub-dealer Name</th>
+                <th>Sub-dealer Contact No.</th>
             </tr>
         </thead>
         <tbody id="bikeTable">
             <!-- Rows will be dynamically added here -->
         </tbody>
     </table>
+
+    
 
     <script>
         // Fetch bike types and populate dropdown
@@ -154,7 +245,7 @@
         // Fetch colours based on selected type
         async function fetchColours(bikeName, status) {
             try {
-                const response = await fetch(`/get_colours?bikeName=${bikeName}&status=${status}`);
+                const response = await fetch(`/get_colours?bike_name=${bikeName}&status=${status}`);
                 if (!response.ok) throw new Error('Failed to fetch colours');
                 const colours = await response.json();
                 const colourDropdown = document.getElementById('bikeColor');
@@ -175,7 +266,7 @@
             const bikeName = document.getElementById('bikeName').value;
             const bikeColor = document.getElementById('bikeColor').value;
             const status = document.getElementById('status').value;
-            const response = await fetch(`/get_bikes?bikeName=${bikeName}&bikeColor=${bikeColor}&status=${status}`);
+            const response = await fetch(`/get_bikes?bike_name=${bikeName}&bike_color=${bikeColor}&status=${status}`);
             const bikes = await response.json();
             if (bikes === null) return;
             const bikeTable = document.getElementById('bikeTable');
@@ -183,23 +274,48 @@
             bikes.forEach(bike => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${bike.chasisNo}</td>
-                    <td>${bike.bikeName}</td>
-                    <td>${bike.bikeColor}</td>
+                    <td>${bike.chasis_no}</td>
+                    <td>${bike.bike_name}</td>
+                    <td>${bike.bike_color}</td>
                     <td>${bike.status}</td>
+                    <td>${bike.cost}</td>
+                    <td>${bike.sold_for}</td>
+                    <td>${bike.location}</td>
+                    <td>${bike.sub_dealer_name}</td>
+                    <td>${bike.sub_dealer_contact_no}</td>
                 `;
                 bikeTable.appendChild(row);
             });
         }
 
+
         // Event listeners
+        
+        
+        var bike_name = ""
+        var status = ""
         document.getElementById('bikeName').addEventListener('change', (event) => {
-            document.getElementById('status').addEventListener('change', (event1) => {
-                fetchColours(event.target.value, event1.target.value);
-            });
+            bike_name = event.target.value
+            fetchColours(bike_name, status);
+            
+        });
+        document.getElementById('status').addEventListener('change', (event1) => {
+            status = event1.target.value
+            fetchColours(bike_name, status);
         });
         document.getElementById('showBikes').addEventListener('click', fetchBikes);
-
+        function toggleMenu() {
+            const dropdownMenu = document.getElementById("dropdownMenu");
+            dropdownMenu.style.display = dropdownMenu.style.display === "flex" ? "none" : "flex";
+        }
+        // Close dropdown on window resize if width exceeds 768px
+        window.addEventListener("resize", () => {
+            const dropdownMenu = document.getElementById("dropdownMenu");
+            if (window.innerWidth > 768) {
+                const dropdownMenu = document.getElementById("dropdownMenu");
+                dropdownMenu.style.display = "none";
+            }
+        });
         // Initialize bike types on page load
         fetchBikeTypes();
     </script>
