@@ -1,24 +1,16 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "api/index.js",
-        "use": "@vercel/node"
-      },
-      {
-        "src": "public/**/*",
-        "use": "@vercel/static"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/api/(.*)",
-        "dest": "api/index.js"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "/public/$1"
-      }
+    "rewrites": [
+        { "source": "/get_bike_types", "destination": "/api/get_bike_types" },
+        { "source": "/get_colours", "destination": "/api/get_colours" },
+        { "source": "/get_bikes", "destination": "/api/get_bikes" },
+        { "source": "/changeStatus", "destination": "/api/get_bike_types" },
+        { "source": "/get_all_chasis", "destination": "/api/get_colours" },
+        { "source": "/get_bike_details", "destination": "/api/get_bikes" },
+        { "source": "/update_bike_details", "destination": "/api/get_bike_types" },
+        { "source": "/get_colours", "destination": "/api/get_colours" },
+        { "source": "/get_bikes", "destination": "/api/get_bikes" },
+        { "source": "/", "destination": "/api/index" },
+        { "source": "/changeStatus", "destination": "/api/changeStatus" },
+        { "source": "/uploadData", "destination": "/api/uploadData" }
     ]
-  }
-  
+}
