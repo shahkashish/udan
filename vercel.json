@@ -1,1 +1,16 @@
-{ "version": 2, "rewrites": [{ "source": "/(.*)", "destination": "/api" }] }
+{
+    "rewrites": [
+        { "source": "/get_bike_types", "destination": "/api/get_bike_types" },
+        { "source": "/get_colours", "destination": "/api/get_colours" },
+        { "source": "/get_bikes", "destination": "/api/get_bikes" },
+        { "source": "/changeStatus", "destination": "/api/get_bike_types" },
+        { "source": "/get_all_chasis", "destination": "/api/get_colours" },
+        { "source": "/get_bike_details", "destination": "/api/get_bikes" },
+        { "source": "/update_bike_details", "destination": "/api/get_bike_types" },
+        { "source": "/get_colours", "destination": "/api/get_colours" },
+        { "source": "/get_bikes", "destination": "/api/get_bikes" },
+        { "source": "/", "destination": "/api/index" },
+        { "source": "/changeStatus", "destination": "/api/changeStatus" },
+        { "source": "/uploadExcel", "destination": "/api/uploadExcel" }
+    ]
+}
