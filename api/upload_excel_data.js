@@ -7,7 +7,19 @@ module.exports = async (req, res) => {
     const excelData = req.body;
     try {
         const insertPromises = excelData.map(async (row) => {
-            const { data, error } = await supabase
+            try {
+
+                const { error } = await supabase
+                .from('stockStatus')
+                .delete()
+                .eq('chasis_no', row.CHASSIS_NO)
+        
+            } catch (error) {
+                console.error("Error insert data:", error);
+                res.status(500).json({ error: 'Failed to insert data' });
+            }
+
+            const{ data, error1 } = await supabase
                 .from('stockStatus')
                 .insert([
                     {
