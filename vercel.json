@@ -9,7 +9,7 @@
         { "source": "/get_colours", "destination": "/api/get_colours" },
         { "source": "/get_bikes", "destination": "/api/get_bikes" },
         { "source": "/", "destination": "/api/index" },
-        { "source": "/changeStatus", "destination": "/public/changeStatus.html" },
+        { "source": "/changeStatus", "destination": "/api/changeStatus" },
         { "source": "/uploadExcel", "destination": "/api/uploadExcel" }
     ]
     
