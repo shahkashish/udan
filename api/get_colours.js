@@ -12,18 +12,22 @@ module.exports = async (req, res) => {
                 .from('stockStatus')
                 .select('bike_color')
                 .eq('bike_name', bike_name)
-                .eq('status',"SOLD"));
+                .eq('status',"SOLD")
+                .limit(1000000));
         } else if(status === "") {
             ({ data, error } = await supabase
                 .from('stockStatus')    
                 .select('bike_color')
-                .eq('bike_name', bike_name));
+                .eq('bike_name', bike_name)
+                .limit(1000000)
+            );
         } else {
             ({ data, error } = await supabase
                 .from('stockStatus')
                 .select('bike_color')
                 .eq('bike_name', bike_name)
-                .neq('status',"SOLD"));
+                .neq('status',"SOLD")
+                .limit(1000000));
         }
 
         if (error) {

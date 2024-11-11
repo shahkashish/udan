@@ -10,6 +10,7 @@ module.exports = async (req, res) => {
             .from('stockStatus')
             .select('*')
             .eq('chasis_no', chasis_no)
+            .limit(1000000)
         if (error) {
             res.status(500).json({ error: error.message });
         }

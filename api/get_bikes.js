@@ -12,6 +12,7 @@ module.exports = async (req, res) => {
             ({ data, error } = await supabase
                 .from('stockStatus')
                 .select('*')
+                .limit(1000000)
             );
         } else if (bike_name !== "" && bike_color === "" && status === "") {
             // Case 2: Only bike_name is provided
@@ -19,6 +20,7 @@ module.exports = async (req, res) => {
                 .from('stockStatus')
                 .select('*')
                 .eq('bike_name', bike_name)
+                .limit(1000000)
             );
         } else if (bike_name === "" && bike_color !== "" && status === "") {
             // Case 3: Only bike_color is provided
@@ -26,6 +28,7 @@ module.exports = async (req, res) => {
                 .from('stockStatus')
                 .select('*')
                 .eq('bike_color', bike_color)
+                .limit(1000000)
             );
         } else if (bike_name === "" && bike_color === "" && status !== "") {
             // Case 4: Only status is provided
@@ -34,12 +37,14 @@ module.exports = async (req, res) => {
                     .from('stockStatus')
                     .select('*')
                     .eq('status', "SOLD")
+                    .limit(1000000)
                 );
             } else{
                 ({ data, error } = await supabase
                     .from('stockStatus')
                     .select('*')
                     .neq('status', "SOLD")
+                    .limit(1000000)
                 );
             }
             
@@ -50,6 +55,7 @@ module.exports = async (req, res) => {
                 .select('*')
                 .eq('bike_name', bike_name)
                 .eq('bike_color', bike_color)
+                .limit(1000000)
             );
         } else if (bike_name !== "" && bike_color === "" && status !== "") {
             if(status === "Sold"){
@@ -58,6 +64,7 @@ module.exports = async (req, res) => {
                     .select('*')
                     .eq('bike_name', bike_name)
                     .eq('status', "SOLD")
+                    .limit(1000000)
                 );
             } else{
                 ({ data, error } = await supabase
@@ -65,6 +72,7 @@ module.exports = async (req, res) => {
                     .select('*')
                     .eq('bike_name', bike_name)
                     .neq('status', "SOLD")
+                    .limit(1000000)
                 );
             }
             // Case 6: bike_name and status are provided
@@ -77,6 +85,7 @@ module.exports = async (req, res) => {
                     .select('*')
                     .eq('bike_color', bike_color)
                     .eq('status', "SOLD")
+                    .limit(1000000)
                 );
             } else{
                 ({ data, error } = await supabase
@@ -84,6 +93,7 @@ module.exports = async (req, res) => {
                     .select('*')
                     .eq('bike_color', bike_color)
                     .neq('status', "SOLD")
+                    .limit(1000000)
                 );
             }
             
@@ -96,6 +106,7 @@ module.exports = async (req, res) => {
                     .eq('bike_name', bike_name)
                     .eq('bike_color', bike_color)
                     .eq('status', "SOLD")
+                    .limit(1000000)
                 );
             } else{
                 ({ data, error } = await supabase
@@ -104,6 +115,7 @@ module.exports = async (req, res) => {
                     .eq('bike_name', bike_name)
                     .eq('bike_color', bike_color)
                     .neq('status', "SOLD")
+                    .limit(1000000)
                 );
             }
             

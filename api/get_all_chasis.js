@@ -9,6 +9,7 @@ module.exports = async (req, res) => {
         const { data, error } = await supabase
             .from('stockStatus')
             .select('chasis_no')
+            .limit(1000000)
         if (error) {
             res.status(500).json({ error: error.message});
         }
