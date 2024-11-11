@@ -10,10 +10,10 @@ module.exports = async (req, res) => {
             .from('stockStatus')
             .select('chasis_no')
         if (error) {
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ error: error.message});
         }
 
-        const types = [...new Set(data.map(row => row))];
+        const types = [...new Set(data.map(row => row.chasis_no))];
         res.json(types);
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
