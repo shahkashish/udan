@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
             res.status(500).json({ error: error.message });
         }
 
-        const types = [...new Set(data.map(row => row.chasis_no))];
+        const types = [...new Set(data.map(row => row))];
         res.json(types);
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
