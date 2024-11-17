@@ -1,7 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
-
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
-console.log("here")
 module.exports = async (req, res) => {
     try {
         const bike_name = req.query.bike_name;
@@ -12,22 +10,18 @@ module.exports = async (req, res) => {
                 .from('stockStatus')
                 .select('bike_color')
                 .eq('bike_name', bike_name)
-                .eq('status',"SOLD")
-                .limit(1000000));
+                .eq('status',"SOLD"));
         } else if(status === "") {
             ({ data, error } = await supabase
                 .from('stockStatus')    
                 .select('bike_color')
-                .eq('bike_name', bike_name)
-                .limit(1000000)
-            );
+                .eq('bike_name', bike_name));
         } else {
             ({ data, error } = await supabase
                 .from('stockStatus')
                 .select('bike_color')
                 .eq('bike_name', bike_name)
-                .neq('status',"SOLD")
-                .limit(1000000));
+                .neq('status',"SOLD"));
         }
 
         if (error) {

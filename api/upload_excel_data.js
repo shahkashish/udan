@@ -23,13 +23,13 @@ module.exports = async (req, res) => {
                 .from('stockStatus')
                 .insert([
                     {
-                        chasis_no: row.CHASSIS_NO,
-                        bike_name: row.MODEL,
-                        status: row.ALLOTMENT_STATUS,
-                        bike_color: row.COLOUR,
+                        chasis_no: row.CHASSIS_NO.toUpperCase,
+                        bike_name: row.MODEL.toUpperCase,
+                        status: row.ALLOTMENT_STATUS.toUpperCase,
+                        bike_color: row.COLOUR.toUpperCase,
                         cost: row.cost,
-                        location: row.VEHICLE_STANDING,
-                        sub_dealer_name: row.SALE_EXE,
+                        location: row.VEHICLE_STANDING.toUpperCase,
+                        sub_dealer_name: row.SALE_EXE.toUpperCase,
                         sub_dealer_contact_no: row.COTACT_NO
                     }
                 ])

@@ -17,7 +17,6 @@
         /* Navbar styles */
         .navbar {
             background-color: #333;
-            overflow: hidden;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -82,7 +81,7 @@
             background-color: #555;
         }
 
-        /* Responsive layout */
+        /* Responsive layout for navbar */
         @media (max-width: 768px) {
             .navbar-menu {
                 display: none;
@@ -90,6 +89,10 @@
 
             .menu-icon {
                 display: block;
+            }
+
+            .dropdown-menu {
+                display: flex;
             }
         }
 
@@ -159,6 +162,40 @@
 
         td {
             background-color: #f9f9f9;
+        }
+
+        /* Table responsive styling */
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+            }
+
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            tr {
+                margin-bottom: 10px;
+            }
+
+            td {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px;
+                text-align: left;
+                border: none;
+                border-bottom: 1px solid #ddd;
+                position: relative;
+            }
+
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                width: 50%;
+            }
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -233,6 +270,7 @@
         async function fetchBikeTypes() {
             const response = await fetch('/get_bike_types');
             const types = await response.json();
+            types.sort()
             const bikeTypeDropdown = document.getElementById('bikeName');
             types.forEach(type => {
                 const option = document.createElement('option');
@@ -248,6 +286,7 @@
                 const response = await fetch(`/get_colours?bike_name=${bikeName}&status=${status}`);
                 if (!response.ok) throw new Error('Failed to fetch colours');
                 const colours = await response.json();
+                colours.sort()
                 const colourDropdown = document.getElementById('bikeColor');
                 colourDropdown.innerHTML = '<option value="">Select Colour</option>';
                 colours.forEach(colour => {
