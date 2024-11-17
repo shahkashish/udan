@@ -10,7 +10,8 @@
         { "source": "/get_bikes", "destination": "/api/get_bikes" },
         { "source": "/", "destination": "/api/index" },
         { "source": "/changeStatus", "destination": "/api/changeStatus" },
-        { "source": "/uploadExcel", "destination": "/api/uploadExcel" }
+        { "source": "/uploadExcel", "destination": "/api/uploadExcel" },
+        { "source": "/upload_excel_data", "destination": "/api/upload_excel_data" }
     ]
     
 }
