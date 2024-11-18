@@ -1,146 +1,46 @@
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
-
 module.exports = async (req, res) => {
+    const BATCH_SIZE = 1000; // Number of rows to fetch per batch
+    let allData = [];
+    let offset = 0;
+    let hasMoreData = true;
+
     try {
-        const { bike_name, bike_color ,status} = req.query;
-    
-    
-        if (bike_name === "" && bike_color === "" && status === "") {
-            // Case 1: All parameters are empty
-            ({ data, error } = await supabase
-                .from('stockStatus')
-                .select('*')
-                .limit(1000000)
-            );
-        } else if (bike_name !== "" && bike_color === "" && status === "") {
-            // Case 2: Only bike_name is provided
-            ({ data, error } = await supabase
-                .from('stockStatus')
-                .select('*')
-                .eq('bike_name', bike_name)
-                .limit(1000000)
-            );
-        } else if (bike_name === "" && bike_color !== "" && status === "") {
-            // Case 3: Only bike_color is provided
-            ({ data, error } = await supabase
-                .from('stockStatus')
-                .select('*')
-                .eq('bike_color', bike_color)
-                .limit(1000000)
-            );
-        } else if (bike_name === "" && bike_color === "" && status !== "") {
-            // Case 4: Only status is provided
-            if(status === "Sold"){
-                ({ data, error } = await supabase
-                    .from('stockStatus')
-                    .select('*')
-                    .eq('status', "SOLD")
-                    .limit(1000000)
-                );
-            } else{
-                ({ data, error } = await supabase
-                    .from('stockStatus')
-                    .select('*')
-                    .neq('status', "SOLD")
-                    .limit(1000000)
-                );
+        const { bike_name, bike_color, status } = req.query;
+
+        while (hasMoreData) {
+            let query = supabase.from('stockStatus').select('*').range(offset, offset + BATCH_SIZE - 1);
+
+            // Apply conditions based on input parameters
+            if (bike_name) query = query.eq('bike_name', bike_name);
+            if (bike_color) query = query.eq('bike_color', bike_color);
+            if (status) {
+                if (status === "Sold") {
+                    query = query.eq('status', "SOLD");
+                } else {
+                    query = query.neq('status', "SOLD");
+                }
             }
-            
-        } else if (bike_name !== "" && bike_color !== "" && status === "") {
-            // Case 5: bike_name and bike_color are provided
-            ({ data, error } = await supabase
-                .from('stockStatus')
-                .select('*')
-                .eq('bike_name', bike_name)
-                .eq('bike_color', bike_color)
-                .limit(1000000)
-            );
-        } else if (bike_name !== "" && bike_color === "" && status !== "") {
-            if(status === "Sold"){
-                ({ data, error } = await supabase
-                    .from('stockStatus')
-                    .select('*')
-                    .eq('bike_name', bike_name)
-                    .eq('status', "SOLD")
-                    .limit(1000000)
-                );
-            } else{
-                ({ data, error } = await supabase
-                    .from('stockStatus')
-                    .select('*')
-                    .eq('bike_name', bike_name)
-                    .neq('status', "SOLD")
-                    .limit(1000000)
-                );
+
+            // Fetch data
+            const { data, error } = await query;
+
+            if (error) {
+                res.status(500).json({ error: error.message });
+                return;
             }
-            // Case 6: bike_name and status are provided
-            
-        } else if (bike_name === "" && bike_color !== "" && status !== "") {
-            // Case 7: bike_color and status are provided
-            if(status === "Sold"){
-                ({ data, error } = await supabase
-                    .from('stockStatus')
-                    .select('*')
-                    .eq('bike_color', bike_color)
-                    .eq('status', "SOLD")
-                    .limit(1000000)
-                );
-            } else{
-                ({ data, error } = await supabase
-                    .from('stockStatus')
-                    .select('*')
-                    .eq('bike_color', bike_color)
-                    .neq('status', "SOLD")
-                    .limit(1000000)
-                );
+
+            if (data.length === 0) {
+                hasMoreData = false; // Stop fetching if no more data
+            } else {
+                allData = allData.concat(data);
+                offset += BATCH_SIZE; // Update offset for the next batch
             }
-            
-        } else if (bike_name !== "" && bike_color !== "" && status !== "") {
-            // Case 8: All parameters are provided
-            if(status === "Sold"){
-                ({ data, error } = await supabase
-                    .from('stockStatus')
-                    .select('*')
-                    .eq('bike_name', bike_name)
-                    .eq('bike_color', bike_color)
-                    .eq('status', "SOLD")
-                    .limit(1000000)
-                );
-            } else{
-                ({ data, error } = await supabase
-                    .from('stockStatus')
-                    .select('*')
-                    .eq('bike_name', bike_name)
-                    .eq('bike_color', bike_color)
-                    .neq('status', "SOLD")
-                    .limit(1000000)
-                );
-            }
-            
         }
-    
-        if (error) {
-            res.status(500).json({ error: error.message });
-        } else {
-                res.json(data);
-            
-            
-        }
+
+        res.json(allData);
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
     }
-        
-
-
-
-
-
-
-
-
-
-
-
-    
 };
