@@ -286,6 +286,20 @@ function filterChasis() {
             alert("Failed to fetch bike details");
         }
     }
+    function toggleMenu() {
+        const dropdownMenu = document.getElementById("dropdownMenu");
+        dropdownMenu.style.display = dropdownMenu.style.display === "flex" ? "none" : "flex";
+    }
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    dropdownMenu.style.display = "none";
+    // Close dropdown on window resize if width exceeds 768px
+    window.addEventListener("resize", () => {
+        const dropdownMenu = document.getElementById("dropdownMenu");
+        if (window.innerWidth > 768) {
+            const dropdownMenu = document.getElementById("dropdownMenu");
+            dropdownMenu.style.display = "none";
+        }
+    });
 
     async function updateBikeDetails() {
         const chasisNo = document.getElementById("chasisInput").value;
@@ -328,6 +342,7 @@ function filterChasis() {
             alert("Failed to update bike details");
         }
     }
+
 </script>
 
 </body>
