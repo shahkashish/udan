@@ -77,10 +77,33 @@
 
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+const BATCH_SIZE = 500;
 
+async function deleteInBatches(chasisList) {
+    for (let i = 0; i < chasisList.length; i += BATCH_SIZE) {
+        const batch = chasisList.slice(i, i + BATCH_SIZE);
+        const { error } = await supabase
+            .from('stockStatus')
+            .delete()
+            .in('chasis_no', batch);
+
+        if (error) {
+            throw new Error(`Batch deletion failed: ${error.message}`);
+        }
+    }
+}
 module.exports = async (req, res) => {
     try {
         const excelData = req.body;
+
+        if (!Array.isArray(excelData) || excelData.length === 0) {
+            res.status(400).json({ error: "No data provided or invalid format." });
+            return;
+        }
+
+        // Extract chassis numbers for deletion
+        const chasis_to_delete = excelData.map(row => row.CHASSIS_NO).filter(Boolean); // Filter out falsy values
+        await deleteInBatches(chasis_to_delete)
 
         // Prepare data for bulk insertion
         const insertData = excelData.map(row => ({
@@ -88,20 +111,21 @@ module.exports = async (req, res) => {
             bike_name: row.MODEL,
             status: row.ALLOTMENT_STATUS,
             bike_color: row.COLOUR,
-            cost: row.cost,
+            cost: row.COST, // Ensure the column name matches your Supabase table
+            sold_for: row.SOLD_FOR,
             location: row.VEHICLE_STANDING,
             sub_dealer_name: row.SALE_EXE,
-            sub_dealer_contact_no: row.CONTACT_NO
+            sub_dealer_contact_no: row.CONTACT_NO,
         }));
 
         // Perform bulk insertion
-        const { error } = await supabase
+        const { error: insertError } = await supabase
             .from('stockStatus')
             .insert(insertData);
 
-        if (error) {
-            // Handle insertion error
-            res.status(500).json({ error: error.message });
+        if (insertError) {
+            console.error("Error during insertion:", insertError);
+            res.status(500).json({ error: `Insertion failed: ${insertError.message}` });
             return;
         }
 
@@ -109,7 +133,7 @@ module.exports = async (req, res) => {
         res.status(200).json({ message: 'Data uploaded successfully' });
     } catch (error) {
         // Handle server error
-        console.error("Error inserting data:", error);
-        res.status(500).json({ error: 'Failed to upload data' });
+        console.error("Error processing request:", error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
